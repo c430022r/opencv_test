@@ -13,7 +13,7 @@ file_dst = '20210624.png'
 print(os.path.exists(file_dir+src_dir+file_src))
 print(os.path.exists(file_dir+mask_dir+file_mask))
 
-
+image_list = list()
 img_src1 = cv2.imread(file_dir+src_dir+file_src,1) #入力画像の読み込み（カラー）
 #img_src2 = cv2.imread(file_dir+src_dir+file_src,0) #入力画像の読み込む（グレー）
 
@@ -31,3 +31,5 @@ cv2.imwrite('2.png',img_b2)
 cv2.imwrite('3.png',img_b3)
 cv2.imwrite('4.png',img_b4)
 cv2.imwrite('5.png',img_b5)
+
+
