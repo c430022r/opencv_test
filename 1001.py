@@ -32,60 +32,72 @@ mskn = list()
 msked = list()
 dst = list()
 
-su = 20  #回数
+su = 15  #回数
 han = su//2
 
-img_msk0 = img_msk
+
+
+#マスク画像の反転
+
+mskn.append(cv2.bitwise_not(img_msk))
+
+
+# 収縮処理　（黒の部分が増える）・・・①
+
+img_msk0 = mskn[0] 
+
+for i in range(0,su,1):
+    img_msk1 = cv2.erode(img_msk0,element8,iterations = 1) 
+    msk.append(img_msk1)
+    img_msk0 = img_msk1
+    
+    #cv2.imwrite('msk.png',msk[10])
+
+    
+#元画像のブラー処理（ぼかし）・・・②
+
 img_blur0 =img_src
 
-# 膨張処理　（白の部分が増える）
-for i in range(0,su,1):
-    img_msk1 = cv2.dilate(img_msk0,element4,iterations = 1) 
-    img_msk2 = cv2.dilate(img_msk1,element4,iterations = 1)
-    img_msk0 = cv2.dilate(img_msk2,element4,iterations = 1)
-    msk.append(img_msk0)
-
-
-
-#元画像のブラー処理（ぼかし）
 for j in range(0,han,1):
-    img_blur1 = cv2.blur(img_blur0,(7,7))
+    img_blur1 = cv2.blur(img_blur0,(5,5))
     blur.append(img_blur1)
     img_blur0 = img_blur1
 
 for j in range(han,su,1):
-    img_blur1 = cv2.blur(img_blur0,(19,19))
+    img_blur1 = cv2.blur(img_blur0,(15,15))
     blur.append(img_blur1)
     img_blur0 = img_blur1
 
 
-
-# 膨張処理マスク画像+元画像ブラーの合成 ・・・△
-# ブラー処理「弱」+　膨張処理「強」
+#収縮処理マスク画像の反転・・・③
 
 a = su-1
 
-for i in range(0,su,1):
-    img.append(cv2.bitwise_and(blur[i],msk[a-i]))
-
-#膨張処理マスク画像の反転・・・①
 for j in range(0,su,1):
     mskn.append(cv2.bitwise_not(msk[a-j]))
+  
+
+# 収縮処理「強」+ ブラー処理「弱」
+# 収縮処理マスク画像 + 元画像ブラーの合成 ・・・④ 
+
+for i in range(0,su,1):
+    img.append(cv2.bitwise_and(mskn[su-i],blur[i]))
 
 
-# 元画像と①の合成・・・②
-# ②と△の合成　
-msked.append(cv2.bitwise_and(img_src,mskn[0]))
+# 元画像とマスク画像の合成　・・・⑤
+msked.append(cv2.bitwise_and(img_src,msk[0]))
+
+# ぼかし機器のみの画像④　+　元画像機器なしの画像⑤
 dst.append(cv2.bitwise_or(img[0],msked[0]))
-cv2.imwrite('msked.png',msked[0])
-cv2.imwrite('dst.png',dst[0])
 
 
-for i in range(1,su,1):
-   msked.append(cv2.bitwise_and(dst[i-1],mskn[i]))
+
+for i in range(1,a,1):
+   msked.append(cv2.bitwise_and(dst[i-1],msk[i]))
    dst.append(cv2.bitwise_or(img[i],msked[i]))
+   
+cv2.imwrite('a.png',dst[a-1])
 
-cv2.imwrite('20.png',dst[su-1])
 
 #############################
 
@@ -107,17 +119,37 @@ def keypoint(file):
 def plot_keypoints(image, keypoints):
     for keypoint in keypoints:
         x, y = keypoint.pt
+        f.write(str(x) + ',' + str(y) + '\n')
+        f.flush()
         cv2.circle(image, (int(x), int(y)), 5, (255, 0, 0), 1, 16)
     return image
 
 if __name__ == "__main__":
+    f=open('ten.csv','w')
     file = sys.argv[1]
     result = keypoint(file)
     if result is not None:
         basename, ext = os.path.splitext(file)
         cv2.imwrite(basename + "_fp" + ext, result)
+    f.close()
         
         
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
