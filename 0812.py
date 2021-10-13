@@ -32,7 +32,7 @@ mskn = list()
 msked = list()
 dst = list()
 
-su = 16  #回数
+su = 25  #回数
 han = su//2
 
 img_msk0 = img_msk
@@ -87,7 +87,7 @@ for i in range(1,su,1):
    msked.append(cv2.bitwise_and(dst[i-1],mskn[i]))
    dst.append(cv2.bitwise_or(img[i],msked[i]))
 
-cv2.imwrite('last.png',dst[su-1])
+cv2.imwrite('25.png',dst[su-1])
 
 #############################
 
@@ -109,16 +109,22 @@ def keypoint(file):
 def plot_keypoints(image, keypoints):
     for keypoint in keypoints:
         x, y = keypoint.pt
-        cv2.circle(image, (int(x), int(y)), 5, (0, 0, 0), 1, 16)
+        f.write(str(x) + ' ' + str(y) + '\n')
+        f.flush()
+        cv2.circle(image, (int(x), int(y)), 10, (0, 0, 0), 1, 16)
     return image
 
+
+
 if __name__ == "__main__":
+    f = open('myfile.csv','w')
     file = sys.argv[1]
     result = keypoint(file)
     if result is not None:
         basename, ext = os.path.splitext(file)
         cv2.imwrite(basename + "_fp" + ext, result)
-        
+    f.close()
+
         
 
 
