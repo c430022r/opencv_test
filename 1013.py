@@ -7,8 +7,8 @@ file_dir = 'data/'
 src_dir = 'src/'
 mask_dir = 'mask/'
 
-file_src= '20200218_102324_0_0_0001_0681_src.png'
-file_mask= '20200218_102324_0_0_0001_0681_mask.png'
+file_src= '20200218_102324_0_0_0005_0681_src.png'
+file_mask= '20200218_102324_0_0_0005_0681_mask.png'
 file_dst = '20210624.png'
 print(os.path.exists(file_dir+src_dir+file_src))
 print(os.path.exists(file_dir+mask_dir+file_mask))
@@ -35,9 +35,9 @@ dst = list()
 mask = list() 
 res = list()
 
-su = 15  #回数
+su = 30  #回数
 han = su//2
-q = su//4
+q = su//8
 
 a = su-1
 
@@ -61,7 +61,7 @@ for i in range(0,su,1):
     img_msk0 = img_msk2
     mask.append(img_msk2)
     
-mask.append(cv2.bitwise_not(mask[3]))
+mask.append(cv2.bitwise_not(mask[q]))
 
 #元画像のブラー処理（ぼかし）・・・②
 
@@ -106,7 +106,7 @@ for i in range(1,su,1):
    
 cv2.imwrite('a.png',dst[a])
 
-res.append(cv2.bitwise_and(mask[su],msk[han+4]))
+res.append(cv2.bitwise_and(mask[su],msk[han+q]))
 cv2.imwrite('res.png',res[0])
 
 img0 = cv2.bitwise_and(res[0],dst[a])
