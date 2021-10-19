@@ -32,6 +32,7 @@ blur = list()
 img = list()
 dst = list()
 
+IMG = list()
 hako = list()
 hakoed = list()
 
@@ -98,9 +99,9 @@ for i in range(0,su,1):
 # 元画像とマスク画像の合成　・・・⑤
 msked.append(cv2.bitwise_and(img_src,msk[0]))
 
+
 # ぼかし機器のみの画像④　+　元画像機器なしの画像⑤
 dst.append(cv2.bitwise_or(img[0],msked[0]))
-
 
 
 for i in range(1,su,1):
@@ -108,6 +109,12 @@ for i in range(1,su,1):
    dst.append(cv2.bitwise_or(img[i],msked[i]))
    
 cv2.imwrite('a.png',dst[a])
+
+IMG.append(cv2.bitwise_and(img_msk,blur[a]))
+hako.append(cv2.bitwise_and(img_src,msk[0]))
+hakoed.append(cv2.bitwise_or(IMG[0],hako[0]))
+
+cv2.imwrite('hako.png',hakoed[0])
 
 res.append(cv2.bitwise_and(mask[su],msk[han+q]))
 cv2.imwrite('res.png',res[0])
