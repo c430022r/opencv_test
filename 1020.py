@@ -105,15 +105,21 @@ dst.append(cv2.bitwise_or(img[0],msked[0]))
 
 for i in range(1,su,1):
    msked.append(cv2.bitwise_and(dst[i-1],msk[i]))
-   dst.append(cv2.bitwise_or(img[i],msked[i]))
-   
+   dst.append(cv2.bitwise_or(img[i],msked[i]))  
 cv2.imwrite('a.png',dst[a])
+
+
 
 res.append(cv2.bitwise_and(mask[su],msk[han+q]))
 cv2.imwrite('res.png',res[0])
 
+
+
 img0 = cv2.bitwise_and(res[0],dst[a])
 cv2.imwrite('kekka.png',img0)
+
+
+
 
 #############################
 
@@ -141,6 +147,8 @@ def plot_keypoints(image, keypoints):
         cv2.circle(image, (int(x), int(y)), 5, (255, 0, 0), 1, 16)
     return image
 
+
+
 def plot_key(image, keypoints, mask):
 
     if mask.shape[2] == 3:
@@ -159,32 +167,18 @@ def plot_key(image, keypoints, mask):
     print(f"all feature {len(keypoints)}, on white feature {feature}")
     return image
 
+
+
 if __name__ == "__main__":
     f=open('ten.csv','w')
     file = sys.argv[1]
     result = keypoint(file)
+
     if result is not None:
         basename, ext = os.path.splitext(file)
         cv2.imwrite(basename + "_fp" + ext, result)
     f.close()
         
         
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

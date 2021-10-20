@@ -47,11 +47,10 @@ for j in range(0,su,1):
 img.append(cv2.bitwise_and(blur[a],img_msk))
 
 
-#膨張処理マスク画像の反転・・・①
 mskn.append(cv2.bitwise_not(img_msk))
 
 
-# 元画像と①の合成・・・②
+# 元画像と反転の合成・・・②
 # ②と△の合成　
 msked.append(cv2.bitwise_and(img_src,mskn[0]))
 dst.append(cv2.bitwise_or(img[0],msked[0]))
