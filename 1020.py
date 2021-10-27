@@ -134,7 +134,7 @@ def keypoint(file):
         # for d in descriptions[:10]:
         #     print("(%s, ..., %s)" % (", ".join(map(lambda x: "%.2f" % x, d[:4])), "%.2f" % d[-1]))
         #return plot_keypoints(cv2.imread(file, cv2.IMREAD_UNCHANGED), keypoints)
-        return plot_key(cv2.imread(file, cv2.IMREAD_UNCHANGED),keypoints,res[0])
+        return plot_keypoints(cv2.imread(file, cv2.IMREAD_UNCHANGED),keypoints)
     else:
         print("ERROR: file not found or not a image: %s" % file)
         return None
@@ -149,34 +149,51 @@ def plot_keypoints(image, keypoints):
 
 
 
-def plot_key(image, keypoints, mask):
+
+def keyp(file):
+    detector = cv2.AKAZE_create(threshold = 0.0001)  #強度を入れる
+    gray = cv2.imread(file, cv2.IMREAD_GRAYSCALE)
+    if gray is not None:
+        keyps = detector.detect(gray)
+        return plot_key(cv2.imread(file, cv2.IMREAD_UNCHANGED),keyps,res[0])
+    else:
+        print("ERROR: file not found or not a image: %s" % file)
+        return None
+
+
+def plot_key(image, keyps, mask):
 
     if mask.shape[2] == 3:
         mask = cv2.cvtColor(mask,cv2.COLOR_BGR2GRAY)
 
     feature = 0
 
-    for keypoint in keypoints:
-        x, y = keypoint.pt
+    for keyp in keyps:
+        x, y = keyp.pt
         if mask[int(y), int(x)] == 255:
             feature += 1
-            cv2.circle(image, (int(x), int(y)), 3, (0, 255, 0), -1, 16)
+            cv2.circle(mask, (int(x), int(y)), 3, (0, 255, 0), -1, 16)
         f.write(str(x) + ',' + str(y) + '\n')
         f.flush()
         cv2.circle(image, (int(x), int(y)), 5, (255, 0, 0), 1, 16)
-    print(f"all feature {len(keypoints)}, on white feature {feature}")
-    return image
-
+    print(f"all feature {len(keyps)}, on white feature {feature}")
+    return mask
 
 
 if __name__ == "__main__":
     f=open('ten.csv','w')
     file = sys.argv[1]
     result = keypoint(file)
-
+    kekka = keyp(file)
+    
+    
     if result is not None:
-        basename, ext = os.path.splitext(file)
-        cv2.imwrite(basename + "_fp" + ext, result)
+    	basename, ext = os.path.splitext(file)
+    	cv2.imwrite(basename + "_img" + ext, result)
+    	
+    if kekka is not None:
+    	basename, ext = os.path.splitext(file)
+    	cv2.imwrite(basename + "_msk" + ext, kekka)
     f.close()
         
         
