@@ -21,7 +21,6 @@ img_msk = cv2.imread(file_dir+mask_dir+file_mask,1) #（カラー）
 
 
 # #  ここに核となる処理を記述する  # #
-
 element4 = np.array([[0,1,0],[1,1,1],[0,1,0]],np.uint8) #4近傍
 element8 = np.array([[1,1,1],[1,1,1],[1,1,1]],np.uint8) #8近傍
 
@@ -32,13 +31,14 @@ blur = list()
 img = list()
 dst = list()
 
+IMG = list()
 hako = list()
 hakoed = list()
 
 mask = list() 
 res = list()
 
-su = 15  #回数
+su = 25  #回数
 han = su//2
 q = su//8
 
@@ -48,6 +48,7 @@ a = su-1
 #マスク画像の反転
 
 img_msk0 = cv2.bitwise_not(img_msk)
+img_mask = cv2.bitwise_not(img_msk)
 
 # 収縮処理　（黒の部分が増える）・・・①
 
@@ -56,29 +57,33 @@ for i in range(0,su,1):
     msk.append(img_msk1)
     img_msk0 = img_msk1
     
-    #cv2.imwrite('msk.png',msk[10])
+    #cv2.imwrite('msk.png',msk[10])  
 
-for i in range(0,su,1):
+img_msk0 = cv2.bitwise_not(img_msk)
+img_msk1 = cv2.erode(img_msk0,element4,iterations = 1) 
+mask.append(cv2.bitwise_not(img_msk1))
+
+for i in range(1,su,1):
     img_msk1 = cv2.erode(img_msk0,element8,iterations = 1) 
     img_msk2 = cv2.erode(img_msk1,element4,iterations = 1)       
     img_msk0 = img_msk2
-    mask.append(img_msk2)
-    
-mask.append(cv2.bitwise_not(mask[q]))
+    mask.append(cv2.bitwise_not(img_msk2))
 
 #元画像のブラー処理（ぼかし）・・・②
 
 img_blur0 =img_src
 
 for j in range(0,han,1):
-    img_blur1 = cv2.blur(img_blur0,(5,5))
-    blur.append(img_blur1)
-    img_blur0 = img_blur1
+    img_blur1 = cv2.blur(img_blur0,(7,7))
+    img_blur2 = cv2.blur(img_blur1,(7,7))
+    blur.append(img_blur2)
+    img_blur0 = img_blur2
 
 for j in range(han,su,1):
-    img_blur1 = cv2.blur(img_blur0,(15,15))
-    blur.append(img_blur1)
-    img_blur0 = img_blur1
+    img_blur1 = cv2.blur(img_blur0,(21,21))
+    img_blur2 = cv2.blur(img_blur1,(21,21))
+    blur.append(img_blur2)
+    img_blur0 = img_blur2
 
 
 #収縮処理マスク画像の反転・・・③
@@ -98,27 +103,38 @@ for i in range(0,su,1):
 # 元画像とマスク画像の合成　・・・⑤
 msked.append(cv2.bitwise_and(img_src,msk[0]))
 
+
 # ぼかし機器のみの画像④　+　元画像機器なしの画像⑤
 dst.append(cv2.bitwise_or(img[0],msked[0]))
 
 
-
 for i in range(1,su,1):
    msked.append(cv2.bitwise_and(dst[i-1],msk[i]))
-   dst.append(cv2.bitwise_or(img[i],msked[i]))  
+   dst.append(cv2.bitwise_or(img[i],msked[i]))
+   
 cv2.imwrite('a.png',dst[a])
 
-
-
-res.append(cv2.bitwise_and(mask[su],msk[han+q]))
-cv2.imwrite('res.png',res[1])
-
-
+res.append(cv2.bitwise_and(mask[16],msk[18]))
+cv2.imwrite('res.png',res[0])
 
 img0 = cv2.bitwise_and(res[0],dst[a])
 cv2.imwrite('kekka.png',img0)
 
 
+msk.append(cv2.dilate(img_mask,element8,iterations = 1)) 
+
+IMG.append(cv2.bitwise_and(mskn[a],blur[a]))
+hako.append(cv2.bitwise_and(img_src,msk[0]))
+hakoed.append(cv2.bitwise_or(IMG[0],hako[0]))
+cv2.imwrite('hako.png',hakoed[0])
+
+
+res.append(cv2.bitwise_and(mask[3],msk[su]))
+cv2.imwrite('mask.png',mask[0])
+cv2.imwrite('msk.png',msk[su])
+cv2.imwrite('res1.png',res[1])
+img1 = cv2.bitwise_and(res[1],hakoed[0])
+cv2.imwrite('kekka1.png',img1)
 
 
 #############################
@@ -155,7 +171,7 @@ def keyp(file):
     gray = cv2.imread(file, cv2.IMREAD_GRAYSCALE)
     if gray is not None:
         keyps = detector.detect(gray)
-        return plot_key(cv2.imread(file, cv2.IMREAD_UNCHANGED),keyps,res[1])
+        return plot_key(cv2.imread(file, cv2.IMREAD_UNCHANGED),keyps,res[0])
     else:
         print("ERROR: file not found or not a image: %s" % file)
         return None
@@ -197,5 +213,3 @@ if __name__ == "__main__":
     f.close()
         
         
-
-
