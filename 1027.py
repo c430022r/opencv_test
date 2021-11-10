@@ -171,7 +171,7 @@ def keyp(file):
     gray = cv2.imread(file, cv2.IMREAD_GRAYSCALE)
     if gray is not None:
         keyps = detector.detect(gray)
-        return plot_key(cv2.imread(file, cv2.IMREAD_UNCHANGED),keyps,res[0])
+        return plot_key(cv2.imread(file, cv2.IMREAD_UNCHANGED),keyps,res[1])
     else:
         print("ERROR: file not found or not a image: %s" % file)
         return None
