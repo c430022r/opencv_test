@@ -23,7 +23,7 @@ for file in files:
     left = left[35:1044,165:795]
     right = right[35:1044,165:795]
     imgs.append(left)    #imgs[]  <---  偶数
-    #imgs.append(right)   #imgs[]  <---  奇数
+    imgs.append(right)   #imgs[]  <---  奇数
     #count+=1
     #print(file)
 
@@ -36,8 +36,8 @@ for file in mskfiles:
     left = img[:,0:width//2]
     right = img[:,width//2:]
     msks.append(left)
-    #msks.append(right)
-    count+=1
+    msks.append(right)
+    count+=2
     #print(file)
 
 
@@ -57,6 +57,7 @@ masks = list()
 image = list()
 msked = list()
 dst = list()
+color = list()
 
 
 su = 15  #回数
@@ -66,14 +67,17 @@ a = su-1
 
 #マスク画像の反転
 print(count)
+
 for j in range(0,count,1):
     print(j)
     
     mskns.clear()
     blurs.clear()
-    image.clear()
     masks.clear()
+    image.clear()
     msked.clear()
+    dst.clear()
+    
 
     gray = cv2.cvtColor(msks[j],cv2.COLOR_RGB2GRAY)
     img_msk0 = cv2.bitwise_not(gray)
@@ -134,26 +138,47 @@ for j in range(0,count,1):
         #mask = np.reshape(masks[a-i], (masks[i].shape[0], masks[i].shape[1], 1))
         #mask = cv2.cvtColor(masks[a-i], cv2.COLOR_GRAY2BGR)
         image.append(cv2.bitwise_and(blurs[i], masks[a-i]))
+        #cv2.imshow('image', image[i])
+        #cv2.waitKey(1)
 
-
+    #cv2.imshow('image', image[0])
+    #cv2.waitKey(1)
     # 元画像とマスク画像の合成　・・・⑤
     grays = cv2.cvtColor(imgs[j],cv2.COLOR_RGB2GRAY)
     msked.append(cv2.bitwise_and(grays,mskns[0]))
+    
+    #cv2.imshow('grays', grays)
+    #cv2.waitKey(1)
+    #cv2.imshow('msked', msked[0])
+    #cv2.waitKey(1)
 
     #msked.append(cv2.bitwise_and(imgs[j],mskns[0]))  #<---color
 
     # ぼかし機器のみの画像④　+　元画像機器なしの画像⑤
     dst.append(cv2.bitwise_or(image[0],msked[0]))
 
+    #cv2.imshow('dst', dst[0])
+    #cv2.waitKey(1)
+
     for i in range(1,su,1):
         msked.append(cv2.bitwise_and(dst[i-1],mskns[i]))
         dst.append(cv2.bitwise_or(image[i],msked[i]))
+        
     
+    #cv2.imshow('msked', msked[0])
+    #cv2.waitKey(1)
+    #cv2.imshow('dst', dst[a])
+    #cv2.waitKey(1)
+
     #cv2.imwrite('pra.png',dst[a])
-    color = cv2.cvtColor(dst[-1],cv2.COLOR_GRAY2RGB)
-    cv2.imshow('dst', color)
-    cv2.waitKey(1)
-    out.write(color)
+    color.append(cv2.cvtColor(dst[-1],cv2.COLOR_GRAY2RGB))
+    #cv2.imshow('color', color)
+    #cv2.waitKey(1)
+    #if j % 2 == 1:
+    #    frame_h = cv2.hconcat([color[j-1],color[j]])
+    #    out.write(frame_h)
+    out.write(color[j])
+
 out.release()
 
 

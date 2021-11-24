@@ -13,7 +13,7 @@ import numpy as np
 
 
 img_array = []
-for filename in sorted(glob.glob("./data/*.png")):
+for filename in sorted(glob.glob("./data/shiro/image_raw/*.jpg")):
     img = cv2.imread(filename)
     height, width, layers = img.shape
     size = (width, height)
@@ -22,6 +22,6 @@ for filename in sorted(glob.glob("./data/*.png")):
 name = 'proj.mp4'
 out = cv2.VideoWriter(name, cv2.VideoWriter_fourcc(*'MP4V'), 5.0, size)
 
-for i in range(len(img_array)*100):
-    out.write(img_array[0])
+for i in range(len(img_array)):
+    out.write(img_array[i])
 out.release()
