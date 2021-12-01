@@ -20,7 +20,7 @@ for filename in sorted(glob.glob("./data/shiro/image_raw/*.jpg")):
     img_array.append(img)
 
 name = 'proj.mp4'
-out = cv2.VideoWriter(name, cv2.VideoWriter_fourcc(*'MP4V'), 5.0, size)
+out = cv2.VideoWriter(name, cv2.VideoWriter_fourcc(*'MP4V'), 30.0, size)
 
 for i in range(len(img_array)):
     out.write(img_array[i])

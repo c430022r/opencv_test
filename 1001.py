@@ -48,8 +48,7 @@ for i in range(0,su,1):
     img_msk1 = cv2.erode(img_msk0,element8,iterations = 1) 
     msk.append(img_msk1)
     img_msk0 = img_msk1
-    
-    #cv2.imwrite('msk.png',msk[10])
+    #cv2.imwrite('msk.png',msk[0])
 
     
 #元画像のブラー処理（ぼかし）・・・②
@@ -72,29 +71,35 @@ for j in range(han,su,1):
 a = su-1
 
 for j in range(0,su,1):
-    mskn.append(cv2.bitwise_not(msk[a-j]))
+    mskn.append(cv2.bitwise_not(msk[j]))
+   
+
   
 
 # 収縮処理「強」+ ブラー処理「弱」
 # 収縮処理マスク画像 + 元画像ブラーの合成 ・・・④ 
 
 for i in range(0,su,1):
-    img.append(cv2.bitwise_and(mskn[a-i],blur[i]))
+    img.append(cv2.bitwise_and(mskn[i],blur[a-i]))
+   
 
 
 # 元画像とマスク画像の合成　・・・⑤
-msked.append(cv2.bitwise_and(img_src,msk[0]))
+msked.append(cv2.bitwise_and(img_src,msk[a]))
+cv2.imwrite('msked.png',msked[0])
 
 # ぼかし機器のみの画像④　+　元画像機器なしの画像⑤
-dst.append(cv2.bitwise_or(img[0],msked[0]))
+dst.append(cv2.bitwise_or(img[a],msked[0]))
+cv2.imwrite('dst.png',dst[0])
 
 
 
 for i in range(1,su,1):
-   msked.append(cv2.bitwise_and(dst[i-1],msk[i]))
-   dst.append(cv2.bitwise_or(img[i],msked[i]))
+   msked.append(cv2.bitwise_and(dst[i-1],msk[a-i]))
+   dst.append(cv2.bitwise_or(img[a-i],msked[i]))
+
    
-cv2.imwrite('a.png',dst[a])
+cv2.imwrite('1111.png',dst[a])
 
 
 #############################
