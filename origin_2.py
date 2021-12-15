@@ -65,12 +65,12 @@ for j in range(0,count,1):
     img_blur = cv2.cvtColor(imgs[j],cv2.COLOR_RGB2GRAY)
 
     msknot = cv2.bitwise_not(mask)
-    mskn = cv2.dilate(msknot,element8,iterations =1)
+    mskn = cv2.dilate(msknot,element4,iterations =1)
     msknot = mskn
 
     for i in range(0,su-1,1):
 
-        mskn = cv2.erode(msknot,element8,iterations =1)
+        mskn = cv2.erode(msknot,element4,iterations =1)
         msknot = mskn
         #cv2.imshow('erode',mskn)
         #cv2.waitKey(0)

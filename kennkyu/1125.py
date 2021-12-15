@@ -10,7 +10,7 @@ count = 0
 
 #img_array = []
 
-name = 'project_1124.mp4'
+name = 'project_1125.mp4'
 
 files = sorted(files)
 for file in files:
@@ -90,7 +90,8 @@ for j in range(0,count,1):
     for i in range(0,su,1):
 
         img_msk1 = cv2.erode(img_msk0,element8,iterations = 1)
-        img_msk2 = cv2.erode(img_msk1,element4,iterations = 1) 
+        img_msk2 = cv2.erode(img_msk1,element8,iterations = 1)
+        #img_msk3 = cv2.erode(img_msk2,element4,iterations = 1)  
         mskns.append(img_msk2)
         img_msk0 = img_msk2
         
@@ -112,20 +113,24 @@ for j in range(0,count,1):
 
     #img_blur0 = imgs[j]  #<--color
 
-    for i in range(0,han,1):
+    for i in range(0,5,1):
         img_blur1 = cv2.blur(img_blur0,(3,3))
         blurs.append(img_blur1)
         img_blur0 = img_blur1
 
-    for i in range(han,su,1):
-        img_blur1 = cv2.blur(img_blur0,(11,11))
-        img_blur2 = cv2.blur(img_blur1,(15,15))
-        blurs.append(img_blur2)
-        img_blur0 = img_blur2
+    for i in range(5,10,1):
+        img_blur1 = cv2.blur(img_blur0,(9,9))
+        blurs.append(img_blur1)
+        img_blur0 = img_blur1
+
+    for i in range(10,su,1):
+        img_blur1 = cv2.blur(img_blur0,(15,15))
+        blurs.append(img_blur1)
+        img_blur0 = img_blur1
 
     #収縮処理マスク画像の反転・・・③
     for i in range(0,su,1):
-        masks.append(cv2.bitwise_not(mskns[a-i]))
+        masks.append(cv2.bitwise_not(mskns[i]))
     
     # 収縮処理「強」+ ブラー処理「弱」
     # 収縮処理マスク画像 + 元画像ブラーの合成 ・・・④ 
@@ -137,7 +142,7 @@ for j in range(0,count,1):
         #blur = cv2.cvtColor(blurs[a-i], cv2.COLOR_GRAY2BGR)
         #mask = np.reshape(masks[a-i], (masks[i].shape[0], masks[i].shape[1], 1))
         #mask = cv2.cvtColor(masks[a-i], cv2.COLOR_GRAY2BGR)
-        image.append(cv2.bitwise_and(blurs[i], masks[a-i]))
+        image.append(cv2.bitwise_and(blurs[a-i], masks[i]))
         #cv2.imshow('image', image[i])
         #cv2.waitKey(1)
 
@@ -145,7 +150,7 @@ for j in range(0,count,1):
     #cv2.waitKey(1)
     # 元画像とマスク画像の合成　・・・⑤
     grays = cv2.cvtColor(imgs[j],cv2.COLOR_RGB2GRAY)
-    msked.append(cv2.bitwise_and(grays,mskns[0]))
+    msked.append(cv2.bitwise_and(grays,mskns[a]))
     
     #cv2.imshow('grays', grays)
     #cv2.waitKey(1)
@@ -155,14 +160,17 @@ for j in range(0,count,1):
     #msked.append(cv2.bitwise_and(imgs[j],mskns[0]))  #<---color
 
     # ぼかし機器のみの画像④　+　元画像機器なしの画像⑤
-    dst.append(cv2.bitwise_or(image[0],msked[0]))
+    dst.append(cv2.bitwise_or(image[a],msked[0]))
 
     #cv2.imshow('dst', dst[0])
     #cv2.waitKey(1)
 
     for i in range(1,su,1):
-        msked.append(cv2.bitwise_and(dst[i-1],mskns[i]))
-        dst.append(cv2.bitwise_or(image[i],msked[i]))
+        msked.append(cv2.bitwise_and(dst[i-1],mskns[a-i]))
+        dst.append(cv2.bitwise_or(image[a-i],msked[i]))
+        cv2.imshow('dst',dst[i])
+        cv2.waitKey(0)
+
         
     
     #cv2.imshow('msked', msked[0])
@@ -185,7 +193,6 @@ for j in range(0,count,1):
     #out.write(color[j])
 
 out.release()
-
 
 
 '''
@@ -221,6 +228,5 @@ out.release()
 #cv2.imwrite('res1.png',res[1])
 #img1 = cv2.bitwise_and(res[1],hakoed[0])
 #cv2.imwrite('kekka1.png',img1)
-
 
 
